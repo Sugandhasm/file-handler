@@ -16,6 +16,6 @@ if (!\class_exists(FileHandler_KernelDevDebugContainer::class, false)) {
 
 return new \ContainerKPxOdzj\FileHandler_KernelDevDebugContainer([
     'container.build_hash' => 'KPxOdzj',
-    'container.build_id' => '0f469f05',
-    'container.build_time' => 1581495024,
+    'container.build_id' => '3a9929b6',
+    'container.build_time' => 1581496134,
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerKPxOdzj');

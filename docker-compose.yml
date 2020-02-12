@@ -1,0 +1,41 @@
+###############################################################################
+#                          Generated on phpdocker.io                          #
+###############################################################################
+version: "2.0"
+services:
+
+    mysql:
+      image: mysql:5.7
+      container_name: file-handler-mysql
+      working_dir: /application
+      environment:
+        - MYSQL_ROOT_PASSWORD=dbrootpw
+        - MYSQL_DATABASE=file_manager
+        - MYSQL_USER=dbuser
+        - MYSQL_PASSWORD=dbpw
+      ports:
+        - "3093:3306"
+
+    webserver:
+      image: nginx:alpine
+      container_name: file-handler-webserver
+      working_dir: /application
+      volumes:
+          - .:/application
+          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "3020:80"
+
+    php-fpm:
+      build: phpdocker/php-fpm
+      container_name: file-handler-php-fpm
+      working_dir: /application
+      volumes:
+        - .:/application
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+    
+    apachetika:
+      image: lexpredict/tika-server
+      container_name: file-handler-tika-server
+      ports:
+        - "9998:9998"

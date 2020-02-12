@@ -58,8 +58,16 @@
     <service id="kernel" class="FileHandler\Kernel" public="true" synthetic="true">
       <tag name="routing.route_loader"/>
     </service>
-    <service id="FileHandler\Modules\FileAsset\Controller\FileController" class="FileHandler\Modules\FileAsset\Controller\FileController" autowire="true" autoconfigure="true"/>
-    <service id="FileHandler\testfile" class="FileHandler\testfile" autowire="true" autoconfigure="true"/>
+    <service id="FileHandler\Modules\FileAsset\Controller\FileController" class="FileHandler\Modules\FileAsset\Controller\FileController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.pNNo5z3.FileHandler\Modules\FileAsset\Controller\FileController"/>
+      </call>
+    </service>
+    <service id="FileHandler\TestFile" class="FileHandler\TestFile" autowire="true" autoconfigure="true">
+      <argument type="service" id="FileHandler\Modules\FileAsset\Controller\FileController"/>
+    </service>
     <service id="controller_resolver" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver" public="false">
       <tag name="monolog.logger" channel="request"/>
       <argument type="service" id="service_container"/>
@@ -1114,6 +1122,9 @@
     <service id="framework_extra_bundle.argument_name_convertor" class="Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter" public="false">
       <argument type="service" id="argument_metadata_factory"/>
     </service>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.FileHandler\Modules\FileAsset\Controller\FileController" class="FileHandler\Modules\FileAsset\Controller\FileController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.FileHandler\Modules\FileAsset\Controller\FileController" class="FileHandler\Modules\FileAsset\Controller\FileController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.FileHandler\Modules\FileAsset\Controller\FileController" class="FileHandler\Modules\FileAsset\Controller\FileController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".service_locator.CmORmuK" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -1146,6 +1157,22 @@
       </argument>
     </service>
     <service id="logger" class="Symfony\Component\HttpKernel\Log\Logger" public="false"/>
+    <service id=".service_locator.pNNo5z3" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="http_kernel" type="service" id="http_kernel" on-invalid="ignore"/>
+        <argument key="parameter_bag" type="service" id="parameter_bag" on-invalid="ignore"/>
+        <argument key="request_stack" type="service" id="request_stack" on-invalid="ignore"/>
+        <argument key="router" type="service" id="router.default" on-invalid="ignore"/>
+        <argument key="session" type="service" id="session" on-invalid="ignore"/>
+      </argument>
+    </service>
+    <service id=".service_locator.pNNo5z3.FileHandler\Modules\FileAsset\Controller\FileController" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator_context" id="FileHandler\Modules\FileAsset\Controller\FileController"/>
+      <argument>FileHandler\Modules\FileAsset\Controller\FileController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.pNNo5z3" method="withContext"/>
+    </service>
     <service id=".service_locator.ld1.260" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">

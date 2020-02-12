@@ -1,6 +1,7 @@
 {
     "name": "files/file-handler",
     "description": "Handling files",
+    "version": "1.0.0",
     "type": "library",
     "authors": [
         {

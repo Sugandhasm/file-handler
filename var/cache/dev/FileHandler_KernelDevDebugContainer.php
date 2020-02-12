@@ -16,6 +16,6 @@ if (!\class_exists(FileHandler_KernelDevDebugContainer::class, false)) {
 
 return new \Container6BLFpt4\FileHandler_KernelDevDebugContainer([
     'container.build_hash' => '6BLFpt4',
-    'container.build_id' => '04160e4e',
-    'container.build_time' => 1581491640,
+    'container.build_id' => 'fdc6f336',
+    'container.build_time' => 1581491870,
 ], __DIR__.\DIRECTORY_SEPARATOR.'Container6BLFpt4');

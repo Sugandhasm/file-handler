@@ -50,9 +50,6 @@
             "@auto-scripts"
         ]
     },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"

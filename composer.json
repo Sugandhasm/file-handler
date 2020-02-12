@@ -8,7 +8,7 @@
             "email": "sugandha.trivedi@impelsys.com"
         }
     ],
-   "require": {
+    "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
@@ -46,11 +46,6 @@
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php70": "*",
         "symfony/polyfill-php56": "*"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        }
     }
 }
 

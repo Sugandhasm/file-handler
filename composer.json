@@ -1,7 +1,6 @@
 {
     "name": "files/file-handler",
     "description": "Handling files",
-    "version": "1.0.0",
     "type": "library",
     "authors": [
         {
@@ -9,8 +8,7 @@
             "email": "sugandha.trivedi@impelsys.com"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {
+   "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",

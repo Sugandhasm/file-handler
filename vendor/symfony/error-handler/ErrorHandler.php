@@ -413,6 +413,11 @@ class ErrorHandler
         $throw = $this->thrownErrors & $type & $level;
         $type &= $level | $this->screamedErrors;
 
+        // Never throw on warnings triggered by assert()
+        if (E_WARNING === $type && 'a' === $message[0] && 0 === strncmp($message, 'assert(): ', 10)) {
+            $throw = 0;
+        }
+
         if (!$type || (!$log && !$throw)) {
             return !$silenced && $type && $log;
         }
@@ -764,7 +769,7 @@ class ErrorHandler
     private function parseAnonymousClass(string $message): string
     {
         return preg_replace_callback('/class@anonymous\x00.*?\.php(?:0x?|:[0-9]++\$)[0-9a-fA-F]++/', static function ($m) {
-            return class_exists($m[0], false) ? get_parent_class($m[0]).'@anonymous' : $m[0];
+            return class_exists($m[0], false) ? (get_parent_class($m[0]) ?: key(class_implements($m[0]))).'@anonymous' : $m[0];
         }, $message);
     }
 }

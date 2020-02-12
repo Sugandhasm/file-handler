@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+5.1.0
+-----
+
+ * added the protected method `PhpFileLoader::callConfigurator()` as extension point to ease custom routing configuration
+ * deprecated `RouteCollectionBuilder` in favor of `RoutingConfigurator`.
+ * added "priority" option to annotated routes
+ * added argument `$priority` to `RouteCollection::add()`
+
 5.0.0
 -----
 

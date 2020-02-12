@@ -49,6 +49,7 @@ class PassConfig
         ];
 
         $this->optimizationPasses = [[
+            new AutoAliasServicePass(),
             new ValidateEnvPlaceholdersPass(),
             new ResolveChildDefinitionsPass(),
             new RegisterServiceSubscribersPass(),
@@ -56,6 +57,7 @@ class PassConfig
             new ResolveFactoryClassPass(),
             new ResolveNamedArgumentsPass(),
             new AutowireRequiredMethodsPass(),
+            new AutowireRequiredPropertiesPass(),
             new ResolveBindingsPass(),
             new ServiceLocatorTagPass(),
             new DecoratorServicePass(),

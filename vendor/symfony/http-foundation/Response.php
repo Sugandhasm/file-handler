@@ -208,9 +208,13 @@ class Response
      *         ->setSharedMaxAge(300);
      *
      * @return static
+     *
+     * @deprecated since Symfony 5.1, use __construct() instead.
      */
     public static function create(?string $content = '', int $status = 200, array $headers = [])
     {
+        trigger_deprecation('symfony/http-foundation', '5.1', 'The "%s()" method is deprecated, use "new %s()" instead.', __METHOD__, \get_called_class());
+
         return new static($content, $status, $headers);
     }
 
@@ -1204,6 +1208,22 @@ class Response
                 ob_end_clean();
             }
         }
+    }
+
+    /**
+     * Marks a response as safe according to RFC8674.
+     *
+     * @see https://tools.ietf.org/html/rfc8674
+     */
+    public function setContentSafe(bool $safe = true): void
+    {
+        if ($safe) {
+            $this->headers->set('Preference-Applied', 'safe');
+        } elseif ('safe' === $this->headers->get('Preference-Applied')) {
+            $this->headers->remove('Preference-Applied');
+        }
+
+        $this->setVary('Prefer', false);
     }
 
     /**

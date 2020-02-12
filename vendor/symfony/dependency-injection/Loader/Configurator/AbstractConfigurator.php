@@ -22,6 +22,11 @@ abstract class AbstractConfigurator
 {
     const FACTORY = 'unknown';
 
+    /**
+     * @var callable(mixed $value, bool $allowService)|null
+     */
+    public static $valuePreProcessor;
+
     /** @internal */
     protected $definition;
 
@@ -31,7 +36,7 @@ abstract class AbstractConfigurator
             return $this->{'set'.$method}(...$args);
         }
 
-        throw new \BadMethodCallException(sprintf('Call to undefined method %s::%s()', \get_class($this), $method));
+        throw new \BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $method));
     }
 
     /**
@@ -49,7 +54,11 @@ abstract class AbstractConfigurator
                 $value[$k] = static::processValue($v, $allowServices);
             }
 
-            return $value;
+            return self::$valuePreProcessor ? (self::$valuePreProcessor)($value, $allowServices) : $value;
+        }
+
+        if (self::$valuePreProcessor) {
+            $value = (self::$valuePreProcessor)($value, $allowServices);
         }
 
         if ($value instanceof ReferenceConfigurator) {

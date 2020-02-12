@@ -13,6 +13,7 @@ namespace Symfony\Component\DependencyInjection\Dumper;
 
 use Composer\Autoload\ClassLoader;
 use Symfony\Component\Debug\DebugClassLoader as LegacyDebugClassLoader;
+use Symfony\Component\DependencyInjection\Argument\AbstractArgument;
 use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
@@ -151,8 +152,8 @@ class PhpDumper extends Dumper
         $this->namespace = $options['namespace'];
         $this->asFiles = $options['as_files'];
         $this->hotPathTag = $options['hot_path_tag'];
-        $this->inlineFactories = $this->asFiles && $options['inline_factories_parameter'] && $this->container->hasParameter($options['inline_factories_parameter']) && $this->container->getParameter($options['inline_factories_parameter']);
-        $this->inlineRequires = $options['inline_class_loader_parameter'] && $this->container->hasParameter($options['inline_class_loader_parameter']) && $this->container->getParameter($options['inline_class_loader_parameter']);
+        $this->inlineFactories = $this->asFiles && $options['inline_factories_parameter'] && (!$this->container->hasParameter($options['inline_factories_parameter']) || $this->container->getParameter($options['inline_factories_parameter']));
+        $this->inlineRequires = $options['inline_class_loader_parameter'] && ($this->container->hasParameter($options['inline_class_loader_parameter']) ? $this->container->getParameter($options['inline_class_loader_parameter']) : (\PHP_VERSION_ID < 70400 || $options['debug']));
         $this->serviceLocatorTag = $options['service_locator_tag'];
 
         if (0 !== strpos($baseClass = $options['base_class'], '\\') && 'Container' !== $baseClass) {
@@ -802,7 +803,7 @@ EOF;
         $this->inlinedDefinitions = $this->getDefinitionsFromArguments([$definition], null, $this->serviceCalls);
 
         if ($definition->isDeprecated()) {
-            $code .= sprintf("        @trigger_error(%s, E_USER_DEPRECATED);\n\n", $this->export($definition->getDeprecationMessage($id)));
+            $code .= sprintf("        trigger_deprecation('', '', %s);\n\n", $this->export($definition->getDeprecationMessage($id)));
         }
 
         if ($this->getProxyDumper()->isProxyCandidate($definition)) {
@@ -1311,7 +1312,7 @@ EOF;
      */
     protected function {$methodNameAlias}()
     {
-        @trigger_error($messageExported, E_USER_DEPRECATED);
+        trigger_deprecation('', '', $messageExported);
 
         return \$this->get($idExported);
     }
@@ -1391,7 +1392,7 @@ EOF;
             return $this->buildParameters[$name];
         }
 
-        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters))) {
+        if (!(isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters))) {
             throw new InvalidArgumentException(sprintf('The parameter "%s" must be defined.', $name));
         }
         if (isset($this->loadedDynamicParameters[$name])) {
@@ -1407,7 +1408,7 @@ EOF;
             return true;
         }
 
-        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || array_key_exists($name, $this->parameters);
+        return isset($this->parameters[$name]) || isset($this->loadedDynamicParameters[$name]) || \array_key_exists($name, $this->parameters);
     }
 
     public function setParameter(string $name, $value): void
@@ -1739,6 +1740,8 @@ EOF;
 
                 return $code;
             }
+        } elseif ($value instanceof AbstractArgument) {
+            throw new RuntimeException(sprintf('Argument "%s" of service "%s" is abstract%s, did you forget to define it?', $value->getArgumentKey(), $value->getServiceId(), $value->getText() ? ' ('.$value->getText().')' : ''));
         } elseif (\is_object($value) || \is_resource($value)) {
             throw new RuntimeException('Unable to dump a service container if a parameter is an object or a resource.');
         }

@@ -68,15 +68,15 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
 
     private static $freshCache = [];
 
-    const VERSION = '5.0.4';
-    const VERSION_ID = 50004;
+    const VERSION = '5.1.0-DEV';
+    const VERSION_ID = 50100;
     const MAJOR_VERSION = 5;
-    const MINOR_VERSION = 0;
-    const RELEASE_VERSION = 4;
-    const EXTRA_VERSION = '';
+    const MINOR_VERSION = 1;
+    const RELEASE_VERSION = 0;
+    const EXTRA_VERSION = 'DEV';
 
-    const END_OF_MAINTENANCE = '07/2020';
-    const END_OF_LIFE = '07/2020';
+    const END_OF_MAINTENANCE = '01/2021';
+    const END_OF_LIFE = '01/2021';
 
     public function __construct(string $environment, bool $debug)
     {
@@ -218,8 +218,8 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
     public function getBundle(string $name)
     {
         if (!isset($this->bundles[$name])) {
-            $class = \get_class($this);
-            $class = 'c' === $class[0] && 0 === strpos($class, "class@anonymous\0") ? get_parent_class($class).'@anonymous' : $class;
+            $class = static::class;
+            $class = 'c' === $class[0] && 0 === strpos($class, "class@anonymous\0") ? (get_parent_class($class) ?: key(class_implements($class))).'@anonymous' : $class;
 
             throw new \InvalidArgumentException(sprintf('Bundle "%s" does not exist or it is not enabled. Maybe you forgot to add it in the registerBundles() method of your %s.php file?', $name, $class));
         }
@@ -393,8 +393,8 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
      */
     protected function getContainerClass()
     {
-        $class = \get_class($this);
-        $class = 'c' === $class[0] && 0 === strpos($class, "class@anonymous\0") ? get_parent_class($class).str_replace('.', '_', ContainerBuilder::hash($class)) : $class;
+        $class = static::class;
+        $class = 'c' === $class[0] && 0 === strpos($class, "class@anonymous\0") ? (get_parent_class($class) ?: key(class_implements($class))).str_replace('.', '_', ContainerBuilder::hash($class)) : $class;
         $class = str_replace('\\', '_', $class).ucfirst($this->environment).($this->debug ? 'Debug' : '').'Container';
         if (!preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $class)) {
             throw new \InvalidArgumentException(sprintf('The environment "%s" contains invalid characters, it can only contain characters allowed in PHP class names.', $this->environment));
@@ -429,7 +429,7 @@ abstract class Kernel implements KernelInterface, RebootableInterface, Terminabl
         $cachePath = $cache->getPath();
 
         // Silence E_WARNING to ignore "include" failures - don't use "@" to prevent silencing fatal errors
-        $errorLevel = error_reporting(\E_ALL ^ \E_WARNING);
+        $errorLevel = error_reporting(E_ALL ^ E_WARNING);
 
         try {
             if (file_exists($cachePath) && \is_object($this->container = include $cachePath)

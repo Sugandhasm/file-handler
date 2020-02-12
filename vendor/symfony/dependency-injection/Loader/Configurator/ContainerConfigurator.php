@@ -69,6 +69,17 @@ class ContainerConfigurator extends AbstractConfigurator
     {
         return new ServicesConfigurator($this->container, $this->loader, $this->instanceof, $this->path, $this->anonymousCount);
     }
+
+    /**
+     * @return static
+     */
+    final public function withPath(string $path): self
+    {
+        $clone = clone $this;
+        $clone->path = $clone->file = $path;
+
+        return $clone;
+    }
 }
 
 /**

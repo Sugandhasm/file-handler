@@ -8,6 +8,7 @@
             "email": "sugandha.trivedi@impelsys.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": "^7.2.5",
         "ext-ctype": "*",
